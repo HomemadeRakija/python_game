@@ -20,12 +20,11 @@ size = 40
 x = WIDTH // 2 - size // 2
 y = HEIGHT - size - 50
 
-player_pos = [x, 0]
 y_velocity = 0
 gravity = 0.6 
 jump_strength = -12
 on_ground = False
-dragging = False
+draggingc= False
 launch_power = 0.2
 MAX_VELOCITY = 50
 
@@ -38,21 +37,18 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            dragging = True
-        elif event.type == pygame.MOUSEBUTTONUP:
-           if dragging:
-            dragging = False
-            mouse_pos = (pygame.mouse.get_pos())
+
+
             
+
 
     # Apply gravity
     y_velocity += gravity
-    player_pos[1]+= y_velocity
+    y += y_velocity
 
     # Collision with ground
-    if player_pos[1]+ size >= ground_y:
-        player_pos[1] = ground_y - size
+    if y + size >= ground_y:
+        y = ground_y - size
         y_velocity = 0
         on_ground = True
 
@@ -63,7 +59,7 @@ while True:
     pygame.draw.rect(screen, WHITE, (0, ground_y, WIDTH, HEIGHT - ground_y))
 
     # Square
-    pygame.draw.rect(screen, BLUE, (*player_pos, size, size))
+    pygame.draw.rect(screen, BLUE, (x, y, size, size))
 
     pygame.display.flip()
     clock.tick(60)

@@ -5,58 +5,59 @@ import time
 
 pygame.init()
 
-# ---------------------- Constants ----------------------
-WIDTH, HEIGHT = 800, 600
-WORLD_WIDTH, WORLD_HEIGHT = 3000, 2000
+# konstanter
+WIDTH, HEIGHT = 800, 600 #hva spilleren ser
+WORLD_WIDTH, WORLD_HEIGHT = 3000, 2000 #hvor stor verden er
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Slingshot Movement - Purple Ball Target")
+screen = pygame.display.set_mode((WIDTH, HEIGHT)) #lager vinduet spilleren ser
+pygame.display.set_caption("Nonacontakainonagons?") #navn når vinduet åpnes
 
-clock = pygame.time.Clock()
-font = pygame.font.SysFont(None, 36)
+clock = pygame.time.Clock() #fps
+font = pygame.font.SysFont(None, 36) #størrelse og font på score
 
-# ---------------------- Player ----------------------
-player_pos = pygame.Vector2(400, 300)
-player_vel = pygame.Vector2(0, 0)
-radius = 20
-gravity = pygame.Vector2(0, 0.6)
-dragging = False
-launch_power = 0.4
+#  Spiller
+player_pos = pygame.Vector2(400, 200) #player_pos og vel er 2d vektorer, pygame.vector2 holder x og y. dette er posisjonen til spilleren. 400 påvirker horisontalt og 300 påvirker vertikalt
+player_vel = pygame.Vector2(0, 0) #hvor fort spilleren beveger seg og i hvilken direksjon. bruker velocity = velocity + acceleration * dt og position = position + acceleration * dt
+radius = 20 #rundheten til spilleren
+gravity = pygame.Vector2(0, 0.6) #konstant accelerasjon på spilleren. bare y aksen. bruker: player_vel += gravity * dt * time_scale. dt er frame time scaling, altså å kontrollere og måle tiden det tar å tegne hvert bildet. time_scale er 0.3 når du holder nede på skjermen.
+dragging = False # ser når spilleren holder nede på skjermen. når holdt så popper trajectoryen og slinghsot vektoren opp.
+launch_power = 0.2 # hvor hardt den blir sendt
+MAX_VELOCITY = 40  # <-- Max hastighet
 
-# ---------------------- Camera ----------------------
-camera = pygame.Vector2(0, 0)
+# Camera
+camera = pygame.Vector2(0, 0) #lagrer øverste venstre korneren i verdens koordinater. altså forteller spilleren hvilken del av verden han ser. kameraet oppdaterer hver frame uavhengig at time_scale
 wall_thickness = 40
 
-# ---------------------- Game Objects ----------------------
-targets = []
-target_radius = 10
-max_targets = 30
-score = 0
+# spill objektene
+targets = [] #de rød ballene som gir 100 poeng. liste av hvor de skal stå.
+target_radius = 10 #størrelsen dems
+max_targets = 30 #hvor mange om gangen
+score = 0 #score når du starter
 
-spiky_balls = []
-spiky_radius = 15
-spiky_spawn_chance = 0.05
-spiky_respawn_time = 30
+spiky_balls = [] # grønne farlige ballene
+spiky_radius = 15 #størrelse
+spiky_spawn_chance = 0.05 # sjansen for å spawne er 5%
+spiky_respawn_time = 30 # etter 30 sekunder så respawner de sånn at du ikke bare kan huske hvor de er og ikke gå dit.
 
-purple_balls = []  # Can have multiple
-purple_radius = 50
-purple_spawn_chance = 0.05
-purple_health = 2
-projectile_interval = 3.5  # seconds
-projectile_speed = 3.5  # projectile speed
+purple_balls = []  # store lille som skyter mindre lille
+purple_radius = 50 #størrelse
+purple_spawn_chance = 0.05 #samme sjanse som grønn
+purple_health = 2 # health pointsa til ballen, du må treffe to ganger for at den skal dø
+projectile_interval = 3.5  # seconds # spawner projectile hver 3,5 sekunder
+projectile_speed = 3.5  # projectile farrt
 
-projectiles = []
-particles = []
+projectiles = [] # positionen til projectilesa til store lilla ball
+particles = [] # partikler når noe blir drept.
 
 time_scale = 1
-projectile_lifetime = 5  # seconds until projectile explodes
+projectile_lifetime = 5  # livstiden til projectiles
 
-# ---------------------- Functions ----------------------
+# funksjoner
 def spawn_target():
     while True:
-        x = random.randint(wall_thickness + target_radius, WORLD_WIDTH - wall_thickness - target_radius)
+        x = random.randint(wall_thickness + target_radius, WORLD_WIDTH - wall_thickness - target_radius) # spawner en ball mellom a og b) sørger for at targets ikke spawner i begger med wall thickness.
         y = random.randint(wall_thickness + target_radius, WORLD_HEIGHT - wall_thickness - target_radius)
-        if pygame.Vector2(x, y).distance_to(player_pos) > 200:
+        if pygame.Vector2(x, y).distance_to(player_pos) > 200: #lagrer posisjonen dems som 2d vektor
             roll = random.random()
             if roll < spiky_spawn_chance:
                 spiky_balls.append({"pos": pygame.Vector2(x, y), "spawn_time": time.time()})
@@ -146,7 +147,7 @@ while True:
                 player_vel = direction * launch_power
 
     # Slow motion
-    time_scale = 0.3 if dragging else 1
+    time_scale = 0.3 if dragging else 1 
 
     # Spawn / Respawn
     while len(targets) + len(spiky_balls) + len(purple_balls) < max_targets:
@@ -159,6 +160,10 @@ while True:
         player_pos += player_vel * dt * time_scale
     else:
         player_vel = pygame.Vector2(0,0)
+
+    # Clamp max velocity
+    if player_vel.length() > MAX_VELOCITY:
+        player_vel.scale_to_length(MAX_VELOCITY)
 
     # Wall collisions
     if player_pos.y > WORLD_HEIGHT - wall_thickness - radius:
@@ -229,8 +234,7 @@ while True:
             if purple["health"] <= 0:
                 explode(purple["pos"])
                 purple_balls.remove(purple)
-                score += 500  # <-- Give 500 points instead of 300
-            # Bounce player slightly
+                score += 500  # Points for destroying purple ball
             player_vel = player_vel.reflect(offset.normalize()) * 0.8
 
     # Reset on death
@@ -239,9 +243,9 @@ while True:
         continue
 
     # Camera
-    target_cam = player_pos - pygame.Vector2(WIDTH//2, HEIGHT//2)
-    camera += (target_cam - camera) * 0.1
-    camera.x = max(0, min(camera.x, WORLD_WIDTH - WIDTH))
+    target_cam = player_pos - pygame.Vector2(WIDTH//2, HEIGHT//2) # width//2 og height//2 er midten av skjermen, å trekke fra spillernes posisjon får vi spilleren plassert i midten.
+    camera += (target_cam - camera) * 0.3 #flytter kameraet smooth i stedte for å bre teleportere. 0.3 er hastigheten på kameraet.
+    camera.x = max(0, min(camera.x, WORLD_WIDTH - WIDTH)) # disse to er sånn at kameraet ikke kan gå ut av verden eller veggene
     camera.y = max(0, min(camera.y, WORLD_HEIGHT - HEIGHT))
 
     # ---------------------- Draw ----------------------
@@ -277,7 +281,7 @@ while True:
     # Purple balls
     for purple in purple_balls:
         pygame.draw.circle(screen,(150,0,200), purple["pos"] - camera, purple_radius)
-        # Draw HP bar INSIDE the purple ball
+        # HP bar inside the ball
         hp_ratio = purple["health"] / purple_health
         bar_width = purple_radius * 1.5
         bar_height = 8
