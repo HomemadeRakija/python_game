@@ -17,3 +17,15 @@ Noen baller dreper deg fordi de er piggete og du er en ball som dør til pigger
 3. spawning av targets.
 4. forstå partikler og prøve å gjøre de om igjen.
 5. vegger.
+
+nyliste:
+1. bytte litt på gravitasjonen for å gjøre den svakere ved å bytte på verdiene.
+2. bli ferdig med slingshotten
+3. fikse at bakgrunnen rører på seg for at kamera følger såpilleren
+4. lerp på kamera
+5. zoome ut basert på velocity
+6. max velocity
+7. ikke gjøre launch poweren for høy
+8. random
+9. bruke random listen for å lage enemies
+10. kollisjon med nenemies
