@@ -22,12 +22,13 @@ y = HEIGHT - size - 50
 
 player_pos = pygame.Vector2(x, 0)
 player_vel = pygame.Vector2(0, 0)
+camera_pos = pygame.Vector2(0, 0)
 gravity = 0.6 
 jump_strength = -12
 on_ground = False
 dragging = False
 launch_power = 0.2
-MAX_VELOCITY = 10
+MAX_VELOCITY = 5
 friction = 1.05
 
 # Ground
@@ -46,7 +47,6 @@ while True:
            if dragging:
             dragging = False
             mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
-            world_mouse = mouse_pos
             direction = player_pos - mouse_pos
             max_lenght = 150
             if direction.length() > max_lenght:
@@ -56,11 +56,6 @@ while True:
     # Apply gravity
     player_vel.y += gravity
     player_pos+= player_vel
-
-    
-       
-
-
 
     # Collision with ground
     if player_pos[1]+ size >= ground_y:
