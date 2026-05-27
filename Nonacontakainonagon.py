@@ -5,7 +5,7 @@ import math
 pygame.init()
 
 # Screen
-WIDTH, HEIGHT = 600, 400
+WIDTH, HEIGHT = 1080, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Gravity Square")
 clock = pygame.time.Clock()
@@ -27,10 +27,12 @@ jump_strength = -12
 on_ground = False
 dragging = False
 launch_power = 0.2
-MAX_VELOCITY = 50
+MAX_VELOCITY = 10
+friction = 1.05
 
 # Ground
 ground_y = HEIGHT - 50
+
 
 # Game loop
 while True:
@@ -55,13 +57,20 @@ while True:
     player_vel.y += gravity
     player_pos+= player_vel
 
+    
+       
+
 
 
     # Collision with ground
     if player_pos[1]+ size >= ground_y:
-        player_pos[1] = ground_y - size
-        y_velocity = 0
-        on_ground = True
+            player_pos[1] = ground_y - size
+            y_velocity = 0
+            on_ground = True
+            #friskjon
+            player_vel = player_vel / friction
+
+
 
     # Draw
     screen.fill(DARK)
