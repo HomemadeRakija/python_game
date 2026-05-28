@@ -41,6 +41,7 @@ while True:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             dragging = True
+            player_vel == 0
         elif event.type == pygame.MOUSEBUTTONUP:
            if dragging:
             dragging = False
@@ -51,6 +52,8 @@ while True:
                direction.scale_to_length (max_lenght)
             player_vel = direction * launch_power
 
+            
+    
     # Apply gravity
     player_vel.y += gravity
     player_pos+= player_vel
@@ -58,10 +61,10 @@ while True:
     # Collision with ground
     if player_pos[1]+ size >= ground_y:
             player_pos[1] = ground_y - size
-            y_velocity = 0
             on_ground = True
             #friskjon
             player_vel = player_vel / friction
+    
 
 
 
