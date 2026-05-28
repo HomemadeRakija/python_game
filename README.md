@@ -29,3 +29,18 @@ nyliste:
 8. random
 9. bruke random listen for å lage enemies
 10. kollisjon med nenemies
+
+
+prøvde å lage kamera i 2 timer. funket ikke skal sikkert bruke ai for det.
+pygames.vector2 er viktig fordi den gjør matten enklere. i setdet for å gange mange forskjellige små ting så kan jeg gange og plusse 3 ting. brukte litt ai på slingshot mekanismen men jeg forstår den
+
+1. 0.6 var perfekt. 0.5 blir til måne gravitasjon og 7 blir for realistisk
+2. ble ferdig
+3. skal få den til å følge spilleren i stedet for.
+4. kanskje
+5. også kanskje
+6. max er 10 nå sånn at karakteren ikke flyr ut av frame før jeg har laget kamera
+7. launch poweren er grei
+8. har ikke begynt med random helt ennå
+9. trenger random
+10. trenger enemies

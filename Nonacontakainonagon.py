@@ -22,9 +22,7 @@ y = HEIGHT - size - 50
 
 player_pos = pygame.Vector2(x, 0)
 player_vel = pygame.Vector2(0, 0)
-camera_pos = pygame.Vector2(0, 0)
-gravity = 0.6 
-jump_strength = -12
+gravity = 0.6
 on_ground = False
 dragging = False
 launch_power = 0.2
